@@ -1,0 +1,63 @@
+
+[VarDef,ZRemSet(15),0]
+
+[RoutineDef,GetZRemeshSettings,
+	[VarSet,ZRemSet(0),[IGet,Tool:Geometry:Legacy(2018)]]
+	[VarSet,ZRemSet(1),[IGet,Tool:Geometry:FreezeBorder]]
+	[VarSet,ZRemSet(2),[IGet,Tool:Geometry:FreezeGroups]]
+	[VarSet,ZRemSet(3),[IGet,Tool:Geometry:KeepGroups]]
+	[If,[IGet,Tool:Geometry:KeepGroups],
+		[VarSet,ZRemSet(4),[IGet,Tool:Geometry:SmoothGroups]]	
+	]
+	[VarSet,ZRemSet(5),[IGet,Tool:Geometry:KeepCreases]]
+	[VarSet,ZRemSet(6),[IGet,Tool:Geometry:DetectEdges]]
+	[VarSet,ZRemSet(7),[IGet,Tool:Geometry:Target Polygons Count]]
+	[VarSet,ZRemSet(8),[IGet,Tool:Geometry:Half]]
+	[VarSet,ZRemSet(9),[IGet,Tool:Geometry:Same]]
+	[VarSet,ZRemSet(10),[IGet,Tool:Geometry:Double]]
+	[VarSet,ZRemSet(11),[IGet,Tool:Geometry:Adapt]]
+	[VarSet,ZRemSet(12),[IGet,Tool:Geometry:AdaptiveSize]]
+	[VarSet,ZRemSet(13),[IGet,Tool:Geometry:Curves Strength]]
+	[VarSet,ZRemSet(14),[IGet,Tool:Geometry:Use Polypaint]]
+]
+
+[RoutineDef,SetZRemeshSettings,
+	[ISet,Tool:Geometry:Legacy(2018),[Var,ZRemSet(0)]]
+	[ISet,Tool:Geometry:FreezeBorder,[Var,ZRemSet(1)]]
+	[ISet,Tool:Geometry:FreezeGroups,[Var,ZRemSet(2)]]
+	[ISet,Tool:Geometry:KeepGroups,[Var,ZRemSet(3)]]
+	[If,[IGet,Tool:Geometry:KeepGroups],
+		[ISet,Tool:Geometry:SmoothGroups,[Var,ZRemSet(4)]]
+	]	
+	[ISet,Tool:Geometry:KeepCreases,[Var,ZRemSet(5)]]
+	[ISet,Tool:Geometry:DetectEdges,[Var,ZRemSet(6)]]
+	[ISet,Tool:Geometry:Target Polygons Count,[Var,ZRemSet(7)]]
+	[ISet,Tool:Geometry:Half,[Var,ZRemSet(8)]]
+	[ISet,Tool:Geometry:Same,[Var,ZRemSet(9)]]
+	[ISet,Tool:Geometry:Double,[Var,ZRemSet(10)]]
+	[ISet,Tool:Geometry:Adapt,[Var,ZRemSet(11)]]
+	[ISet,Tool:Geometry:AdaptiveSize,[Var,ZRemSet(12)]]
+	[ISet,Tool:Geometry:Curves Strength,[Var,ZRemSet(13)]]
+	[ISet,Tool:Geometry:Use Polypaint,[Var,ZRemSet(14)]]
+]
+
+[RoutineDef, remesh_all_subtools,
+//[IFreeze,
+    [If, [IGet, "transform:Edit"] && [IExists,"tool:initialize:QCube"],
+    	[RoutineCall,GetZRemeshSettings]	
+        [Loop, [SubToolGetCount],
+            [SubToolSelect, n]
+            [If,[IExists,Tool:Initialize:QCube],
+							[RoutineCall,SetZRemeshSettings]
+							[IPress,Tool:Geometry:ZRemesher]
+						]
+        ,n]
+        ,//else
+        [Note, "Please, drop a model on the canvas and turn on the edit mode."]
+    ]
+//]    
+]
+
+[IButton, "???", "Zremesh each subtools.\nDefine the Zremesher option before to run the macro.",
+    [RoutineCall, remesh_all_subtools]
+,,1]
